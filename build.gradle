@@ -1,0 +1,74 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+	id 'org.springframework.boot' version '3.2.4'
+	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.jetbrains.kotlin.jvm' version '1.9.23'
+	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.23'
+	id 'org.flywaydb.flyway' version '9.22.3'
+	id 'org.jooq.jooq-codegen-gradle' version '3.19.7'
+}
+
+group = 'jp.webengineer.books'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+	runtimeOnly 'org.postgresql:postgresql'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	jooqCodegen 'org.postgresql:postgresql'
+}
+
+tasks.withType(KotlinCompile) {
+	kotlinOptions {
+		freeCompilerArgs += '-Xjsr305=strict'
+		jvmTarget = '17'
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+flyway {
+	url = 'jdbc:postgresql://localhost:5432/mydatabase'
+	user = 'myuser'
+	password = 'secret'
+}
+
+jooq {
+	configuration {
+		jdbc {
+			driver = 'org.postgresql.Driver'
+			url = 'jdbc:postgresql://localhost:5432/mydatabase'
+			user = 'myuser'
+			password = 'secret'
+		}
+		generator {
+			name = 'org.jooq.codegen.DefaultGenerator'
+			database {
+				name = 'org.jooq.meta.postgres.PostgresDatabase'
+				inputSchema = 'public'
+				includes = '.*'
+			}
+			target {
+				directory = "${buildDir}/generated/source/jooq/main"
+				packageName = 'jp.webengineer.books.bookssearch.jooq'
+			}
+		}
+	}
+}
