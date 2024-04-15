@@ -1,10 +1,15 @@
 package jp.webengineer.bookssearch.model
 
-import java.util.Date
+import com.fasterxml.jackson.annotation.JsonFormat
+import java.time.LocalDate
 
 data class Author(
-    val id: String,
+    val id: String? = null,
+
     val name: String,
-    val birthDay: Date? = null,
-    val remarks: String? = null
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    val birthDay: LocalDate? = null,
+
+    val comment: String? = null
 )
