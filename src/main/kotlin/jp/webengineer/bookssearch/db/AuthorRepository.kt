@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository
 class AuthorRepository(
     @Autowired val dslContext: DSLContext
 ) {
-    fun add(author: Author): AuthorRecord {
+    fun add(author: Author): Author {
         val createdAuthor = this.dslContext.newRecord(AUTHOR).also {
             it.id = ULID.random()
             it.name = author.name
@@ -20,6 +20,15 @@ class AuthorRepository(
             it.comment = author.comment
             it.store()
         }
-        return createdAuthor
+        return createdAuthor.toAuthor()
+    }
+
+    private fun AuthorRecord.toAuthor(): Author {
+        return Author(
+            id = this.id,
+            name = this.name ?: "",
+            birthDay = this.birthDay,
+            comment = this.comment
+        )
     }
 }

@@ -1,8 +1,8 @@
 package jp.webengineer.bookssearch.controller
 
-import jp.webengineer.bookssearch.jooq.tables.records.AuthorRecord
 import jp.webengineer.bookssearch.model.Author
 import jp.webengineer.bookssearch.service.AuthorService
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,9 +19,18 @@ class AuthorsController(
 ) {
     @Throws(ResponseStatusException::class)
 
-    @PostMapping("/create")
-    fun createAuthor(@RequestBody author: Author): ResponseEntity<AuthorRecord> {
-        val createdAuthor = this.authorService.addAuthor(author)
-        return ResponseEntity(createdAuthor, HttpStatus.OK)
+    @PostMapping
+    fun addAuthor(@RequestBody author: Author): ResponseEntity<Author> {
+        return try {
+            val createdAuthor = this.authorService.addAuthor(author)
+            ResponseEntity(createdAuthor, HttpStatus.OK)
+        } catch (e: Exception) {
+            logger.error("addAuthor: author: $author", e)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
+        }
+    }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(AuthorsController::class.java)!!
     }
 }
