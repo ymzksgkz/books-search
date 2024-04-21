@@ -1,6 +1,8 @@
 # Install
 
 ```shell
+$ docker-compose up -d
+
 $ ./gradlew clean
 
 $ ./gradlew flywayMigrate
