@@ -16,6 +16,19 @@ class AuthorsController(
 ) {
     @Throws(ResponseStatusException::class)
 
+    @GetMapping
+    fun searchAuthors(
+        @RequestParam(required = false) name: String?
+    ): ResponseEntity<List<Author>> {
+        return try {
+            val authors = this.authorService.searchAuthors(name)
+            ResponseEntity(authors, HttpStatus.OK)
+        } catch (e: Exception) {
+            logger.error("searchAuthors: name: $name", e)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
+        }
+    }
+
     @PostMapping
     fun addAuthor(@RequestBody author: Author): ResponseEntity<Author> {
         return try {

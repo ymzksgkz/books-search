@@ -12,6 +12,16 @@ import org.springframework.stereotype.Repository
 class AuthorRepository(
     @Autowired val dslContext: DSLContext
 ) {
+
+    fun search(name: String?): List<Author> {
+        val authors = this.dslContext.select()
+            .from(AUTHOR)
+            .where(AUTHOR.NAME.like("%$name%"))
+            .fetch() as List<AuthorRecord>
+
+        return authors.map { it.toAuthor()!! }
+    }
+
     fun add(author: Author): Author {
         val createdAuthor = this.dslContext.newRecord(AUTHOR).also {
             it.id = ULID.random()

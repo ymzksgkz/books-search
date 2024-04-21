@@ -10,6 +10,9 @@ class AuthorService(
     @Autowired val authorRepository: AuthorRepository
 ) {
 
+    fun searchAuthors(name: String?): List<Author> {
+        return this.authorRepository.search(name)
+    }
     fun addAuthor(author: Author): Author {
         val createdAuthor = this.authorRepository.add(author)
         return createdAuthor
