@@ -16,6 +16,19 @@ class BooksController(
 ) {
     @Throws(ResponseStatusException::class)
 
+    @GetMapping("/author/{authorId}")
+    fun searchByAuthorId(
+        @PathVariable authorId: String
+    ): ResponseEntity<List<Book>> {
+        return try {
+            val books = this.bookservice.searchByAuthorId(authorId)
+            ResponseEntity(books, HttpStatus.OK)
+        } catch (e: Exception) {
+            logger.error("searchByAuthorId: authorId: $authorId", e)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
+        }
+    }
+
     @GetMapping
     fun searchAuthors(
         @RequestParam(required = false) title: String?

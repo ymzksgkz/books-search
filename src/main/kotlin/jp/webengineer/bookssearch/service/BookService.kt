@@ -10,6 +10,10 @@ class BookService(
     @Autowired val bookRepository: BookRepository
 ) {
 
+    fun searchByAuthorId(authorId: String): List<Book> {
+        return this.bookRepository.searchByAuthorId(authorId)
+    }
+
     fun searchAuthors(title: String?): List<Book> {
         return this.bookRepository.search(title)
     }

@@ -33,6 +33,15 @@ class BookRepository(
         return createdBook.toBook()!!
     }
 
+    fun searchByAuthorId(authorId: String): List<Book> {
+        val books = this.dslContext.select()
+            .from(BOOK)
+            .where(BOOK.AUTHOR_ID.eq(authorId))
+            .fetch() as List<BookRecord>
+
+        return books.map { it.toBook()!! }
+    }
+
     fun get(bookId: String): Book? {
         val book = this.dslContext.select()
             .from(BOOK)
