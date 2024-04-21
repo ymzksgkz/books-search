@@ -20,10 +20,32 @@ class AuthorRepository(
             it.comment = author.comment
             it.store()
         }
-        return createdAuthor.toAuthor()
+        return createdAuthor.toAuthor()!!
     }
 
-    private fun AuthorRecord.toAuthor(): Author {
+    fun get(authorId: String): Author? {
+        val author = this.dslContext.select()
+            .from(AUTHOR)
+            .where(AUTHOR.ID.eq(authorId))
+            .fetchOne() as AuthorRecord?
+
+        if (author == null) return null
+        return author.toAuthor()
+    }
+
+    fun update(author: Author): Author {
+        this.dslContext.update(AUTHOR)
+            .set(AUTHOR.NAME, author.name)
+            .set(AUTHOR.BIRTH_DAY, author.birthDay)
+            .set(AUTHOR.COMMENT, author.comment)
+            .where(AUTHOR.ID.eq(author.id))
+            .execute()
+        return get(author.id!!)!!
+    }
+
+    private fun AuthorRecord?.toAuthor(): Author? {
+        if (this == null) return null
+
         return Author(
             id = this.id,
             name = this.name ?: "",

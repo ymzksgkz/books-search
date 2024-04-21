@@ -6,10 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
@@ -24,6 +21,17 @@ class AuthorsController(
         return try {
             val createdAuthor = this.authorService.addAuthor(author)
             ResponseEntity(createdAuthor, HttpStatus.OK)
+        } catch (e: Exception) {
+            logger.error("addAuthor: author: $author", e)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
+        }
+    }
+
+    @PatchMapping("/{id}")
+    fun updateAuthor(@PathVariable id: String, @RequestBody author: Author): ResponseEntity<Author> {
+        return try {
+            val updatedAuthor = this.authorService.updateAuthor(id, author)
+            ResponseEntity(updatedAuthor, HttpStatus.OK)
         } catch (e: Exception) {
             logger.error("addAuthor: author: $author", e)
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)

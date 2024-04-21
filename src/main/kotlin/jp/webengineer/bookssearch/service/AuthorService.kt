@@ -14,4 +14,8 @@ class AuthorService(
         val createdAuthor = this.authorRepository.add(author)
         return createdAuthor
     }
+
+    fun updateAuthor(authorId: String, author: Author): Author {
+        return this.authorRepository.update(author)
+    }
 }
